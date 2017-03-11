@@ -13,6 +13,7 @@ import {
   Image,
   TextInput,
   ScrollView,
+  ListView,
 } from 'react-native'
 
 import {monsters} from './monsters';
@@ -31,21 +32,29 @@ export class ListItem extends Component {
 export default class ffxmonster extends Component {
   constructor(props){
     super(props);
-    this.state = {text:''};
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this.state = {dataSource:ds.cloneWithRows(monsters)};
   }
   render() {
-    let LocationItems = monsters.map((location)=>{
+    let LocationItems = (location)=>{
       let monsterTotal = location.monsters.length;
       let caught = 0;
       return (
         <ListItem key={location.name} name={location.name} collected={caught} total={monsterTotal}></ListItem>
-      )
-    });
+      );
+    };
     return (
-      <ScrollView 
-        horizontal={false} style={{marginTop:20}}>
-        {LocationItems}
-      </ScrollView>
+      
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={LocationItems}
+        style={{marginTop:20}}
+        >
+      </ListView>
+//       <ListView 
+//         horizontal={false} style={{marginTop:20}}>
+//         {LocationItems}
+//       </ScrollView>
       
     );
   }

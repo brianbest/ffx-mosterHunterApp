@@ -3,12 +3,12 @@
 		{
 			"range": {
 				"from": {
-					"line": 45,
-					"ch": 20
+					"line": 54,
+					"ch": 23
 				},
 				"to": {
-					"line": 45,
-					"ch": 25
+					"line": 54,
+					"ch": 28
 				}
 			},
 			"type": "boolean",
