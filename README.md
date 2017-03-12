@@ -9,5 +9,5 @@ Brian sits on the couch to play FFX, he is at the point in the game where he is 
 
 - [x] JSON-ify location and monster data
 - [x] Be able to view monsters from a given area
-- [ ] Be able to check off monsters user has captured
+- [x] Be able to check off monsters user has captured
 - [ ] Capture data should persist 
