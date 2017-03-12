@@ -8,6 +8,6 @@ Brian sits on the couch to play FFX, he is at the point in the game where he is 
 ## MVP Status
 
 - [x] JSON-ify location and monster data
-- [ ] Be able to view monsters from a given area
+- [x] Be able to view monsters from a given area
 - [ ] Be able to check off monsters user has captured
 - [ ] Capture data should persist 
