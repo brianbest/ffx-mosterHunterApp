@@ -16,6 +16,7 @@ import {
   ListView,
   TouchableHighlight,
   Button,
+  AsyncStorage,
 } from 'react-native'
 import { StackNavigator } from 'react-navigation';
 import {monsters} from './monsters';
@@ -57,6 +58,7 @@ export class MonsterListItem extends Component{
       let x = this.state.count + 1;
       monsterObj.count = x;
       this.setState({ count: x });
+    this.props.change();
   }
   render(){
    let monsterObj = this.props.obj;
@@ -74,19 +76,35 @@ class FFXLocation extends Component {
   constructor(props){
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.state = {dataSource:ds.cloneWithRows(monsters[this.props.navigation.state.params.location].monsters)};
+    this.state = {dataSource:ds.cloneWithRows([]),monsters:[],location:{name:''}};
+  }
+  componentDidMount() {
+        AsyncStorage.getItem("monsters").then((value) => {
+          let mons = JSON.parse(value);
+          this.setState({"monsters": mons});
+          this.setState({"location": mons[this.props.navigation.state.params.location]});
+          
+          
+          const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+          this.setState({"dataSource": ds.cloneWithRows(mons[this.props.navigation.state.params.location].monsters)});
+            
+        }).done();
+    }
+  saveMonsters = ()=>{
+    
+    AsyncStorage.setItem("monsters", JSON.stringify(this.state.monsters));
   }
   render(){
     
     let MonsterItems = (monster)=>{
       return (
-        <MonsterListItem key={monster.name} name={monster.name} count={monster.count} obj={monster} ></MonsterListItem>
+        <MonsterListItem key={monster.name} name={monster.name} count={monster.count} obj={monster} change={this.saveMonsters}></MonsterListItem>
       );
     };
     return (
       <View style={{flex:1,padding:10}}>
         <View>
-          <Text style={{fontSize:24}}>{monsters[this.props.navigation.state.params.location].name}</Text>
+          <Text style={{fontSize:24}}>{this.state.location.name}</Text>
           
         </View>
         <ListView
@@ -105,12 +123,14 @@ class FFXmonster extends Component {
   static navigationOptions = {
     title: 'Select a location',
   };
+  
   constructor(props){
     super(props);
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.state = {dataSource:ds.cloneWithRows(monsters)};
+          
+    this.state = {"dataSource": ds.cloneWithRows(monsters)};
   }
-  calculateCaught = (location)=>{
+  calculateCaught = function caught(location){
         var total = 0;
         location.monsters.map((monster)=>{
           if(monster.count){
@@ -119,6 +139,19 @@ class FFXmonster extends Component {
         });
         return total
       };
+  componentDidMount() {
+        AsyncStorage.getItem("monsters").then((value) => {
+          if(value){
+            this.setState({"monsters": JSON.parse(value)});
+          }else{
+            AsyncStorage.setItem("monsters", JSON.stringify(monsters));
+          }
+          
+          const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+          this.setState({"dataSource": ds.cloneWithRows(this.state.monsters)});
+            
+        }).done();
+    }
   render() {
     let LocationItems = (location)=>{
       let monsterTotal = location.monsters.length;
